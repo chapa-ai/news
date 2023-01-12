@@ -1,0 +1,23 @@
+version: '3'
+services:
+  db:
+    image: mysql:8.0
+    ports:
+      - "3305:3306"
+    environment:
+      - "MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}"
+      - "MYSQL_USER=${DB_USER}"
+      - "MYSQL_PASSWORD=${DB_PASSWORD}"
+      - "MYSQL_DATABASE=${DB_NAME}"
+  web:
+    entrypoint: ["/go/bin/CompileDaemon"]
+    command: --build="go build main.go" --command=./main
+    build: .
+    ports:
+      - "9993:9993"
+    volumes:
+      - ".:/app"
+    depends_on:
+      - db
+    links:
+      - "db:database"
